@@ -9,7 +9,8 @@ namespace TraceWPF.Views
         public DataMigrationView(DataMigrationViewModel viewModel)
         {
             InitializeComponent();
-            DataContext = viewModel;
+            DataContext = viewModel; 
+
         }
     }
 }

@@ -1,0 +1,169 @@
+<Window
+    x:Class="TraceWPF.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="TraceWPF"
+    Width="900"
+    Height="600"
+    Background="{DynamicResource MaterialDesign.Brush.Background}"
+    FontFamily="{materialDesign:MaterialDesignFont}"
+    TextElement.FontSize="14"
+    TextElement.FontWeight="Regular"
+    TextElement.Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+
+    <Grid>
+        <!--  背景装饰  -->
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Offset="0" Color="#1a1a2e" />
+                <GradientStop Offset="0.5" Color="#16213e" />
+                <GradientStop Offset="1" Color="#0f3460" />
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <Grid Margin="40">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!--  标题区域  -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,30">
+                <TextBlock
+                    FontSize="36"
+                    FontWeight="Bold"
+                    Foreground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
+                    Text="{Binding Title}">
+                    <TextBlock.Effect>
+                        <DropShadowEffect
+                            BlurRadius="20"
+                            Opacity="0.5"
+                            ShadowDepth="0"
+                            Color="#7C4DFF" />
+                    </TextBlock.Effect>
+                </TextBlock>
+                <TextBlock
+                    Margin="0,8,0,0"
+                    FontSize="14"
+                    Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
+                    Opacity="0.7"
+                    Text="欢迎使用 Antigravity WPF 现代化应用程序" />
+            </StackPanel>
+
+            <!--  输入区域 - 卡片样式  -->
+            <materialDesign:Card
+                Grid.Row="1"
+                Margin="0,0,0,24"
+                Padding="24"
+                materialDesign:ElevationAssist.Elevation="Dp8"
+                Background="#252542">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,16"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Foreground="{DynamicResource MaterialDesign.Brush.Secondary}"
+                        Text="快速设置" />
+
+                    <TextBox
+                        materialDesign:HintAssist.Hint="输入新标题..."
+                        materialDesign:HintAssist.IsFloating="True"
+                        materialDesign:TextFieldAssist.HasClearButton="True"
+                        FontSize="16"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                        Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!--  操作按钮区域  -->
+            <StackPanel
+                Grid.Row="2"
+                HorizontalAlignment="Center"
+                Orientation="Horizontal">
+                <!--  更新标题按钮  -->
+                <Button
+                    Height="48"
+                    Margin="8,0"
+                    Padding="24,0"
+                    materialDesign:ElevationAssist.Elevation="Dp4"
+                    Command="{Binding UpdateTitleCommand}"
+                    Style="{StaticResource MaterialDesignRaisedDarkButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            Kind="Pencil" />
+                        <TextBlock VerticalAlignment="Center" Text="更新标题" />
+                    </StackPanel>
+                </Button>
+
+                <!--  加载服务消息按钮  -->
+                <Button
+                    Height="48"
+                    Margin="8,0"
+                    Padding="24,0"
+                    materialDesign:ElevationAssist.Elevation="Dp4"
+                    Command="{Binding LoadWelcomeMessageCommand}"
+                    Style="{StaticResource MaterialDesignRaisedSecondaryDarkButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            Kind="CloudDownload" />
+                        <TextBlock VerticalAlignment="Center" Text="加载消息" />
+                    </StackPanel>
+                </Button>
+
+                <!--  雇员管理按钮 - 突出显示  -->
+                <Button
+                    Height="48"
+                    Margin="8,0"
+                    Padding="24,0"
+                    materialDesign:ElevationAssist.Elevation="Dp8"
+                    Background="#00BFA5"
+                    BorderBrush="#00BFA5"
+                    Command="{Binding OpenEmployeeViewCommand}"
+                    Style="{StaticResource MaterialDesignRaisedButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            Kind="AccountGroup" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontWeight="Bold"
+                            Text="雇员管理" />
+                    </StackPanel>
+                </Button>
+
+                <!--  数据迁移按钮  -->
+                <Button
+                    Height="48"
+                    Margin="8,0"
+                    Padding="24,0"
+                    materialDesign:ElevationAssist.Elevation="Dp8"
+                    Background="#FF9800"
+                    BorderBrush="#FF9800"
+                    Command="{Binding OpenDataMigrationCommand}"
+                    Style="{StaticResource MaterialDesignRaisedButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            Kind="DatabaseRefresh" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontWeight="Bold"
+                            Text="数据迁移" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

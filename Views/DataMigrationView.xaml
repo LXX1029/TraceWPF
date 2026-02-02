@@ -1,0 +1,438 @@
+<Window
+    x:Class="TraceWPF.Views.DataMigrationView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="数据迁移"
+    Width="1400"
+    Height="900"
+    Background="{DynamicResource MaterialDesign.Brush.Background}"
+    FontFamily="{materialDesign:MaterialDesignFont}"
+    TextElement.Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+            Margin="0,0,0,16"
+            FontSize="24"
+            FontWeight="Bold"
+            Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+            Text="TDengine 数据迁移" />
+
+        <StackPanel Grid.Row="1">
+            <!--  Source Connection  -->
+            <materialDesign:Card
+                Margin="0,0,0,12"
+                Padding="16"
+                materialDesign:ElevationAssist.Elevation="Dp2">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,8"
+                        FontWeight="Bold"
+                        Opacity="0.7"
+                        Text="源数据库连接 (Source)" />
+                    <TextBox
+                        materialDesign:HintAssist.Hint="源数据库连接 (Source)"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                        Text="{Binding SourceConnectionString, UpdateSourceTrigger=PropertyChanged}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!--  Target Connection  -->
+            <materialDesign:Card
+                Margin="0,0,0,12"
+                Padding="16"
+                materialDesign:ElevationAssist.Elevation="Dp2">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,8"
+                        FontWeight="Bold"
+                        Opacity="0.7"
+                        Text="目标数据库连接 (Target)" />
+                    <TextBox
+                        materialDesign:HintAssist.Hint="目标数据库连接"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                        Text="{Binding TargetConnectionString, UpdateSourceTrigger=PropertyChanged}"
+                        TextWrapping="Wrap" />
+
+                    <Grid Margin="0,16,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox
+                            Grid.Column="0"
+                            Margin="0,0,8,0"
+                            materialDesign:HintAssist.Hint="目标数据库名称"
+                            Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                            Text="{Binding TargetDbName, UpdateSourceTrigger=PropertyChanged}" />
+                        <ComboBox
+                            Grid.Column="1"
+                            Width="80"
+                            Height="50"
+                            Margin="0,0,8,0"
+                            Padding="5,0,5,0"
+                            materialDesign:HintAssist.Hint="Keep Days"
+                            Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                            Text="{Binding DataBaseParam.KeepDays}"
+                            ToolTip="单位：天 配置数据过期时间">
+                            <ComboBoxItem Content="7" />
+                            <ComboBoxItem>14</ComboBoxItem>
+                            <ComboBoxItem>30</ComboBoxItem>
+                            <ComboBoxItem>60</ComboBoxItem>
+                            <ComboBoxItem>90</ComboBoxItem>
+                            <ComboBoxItem IsSelected="True">120</ComboBoxItem>
+                            <ComboBoxItem>180</ComboBoxItem>
+                            <ComboBoxItem>365</ComboBoxItem>
+                        </ComboBox>
+                        <ComboBox
+                            Grid.Column="2"
+                            Width="80"
+                            Height="50"
+                            Margin="0,0,8,0"
+                            Padding="5,0,5,0"
+                            materialDesign:HintAssist.Hint="Duration"
+                            SelectedIndex="0"
+                            Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                            Text="{Binding DataBaseParam.Duration}"
+                            ToolTip="单位：天 表示数据文件存储数据的时间跨度,时间跨度内的数据会存到同一个.data文件。对于机械硬盘，这种大块连续存储会减少磁头寻道次数。">
+                            <ComboBoxItem Content="7" />
+                            <ComboBoxItem>14</ComboBoxItem>
+                            <ComboBoxItem>21</ComboBoxItem>
+                            <ComboBoxItem>28</ComboBoxItem>
+                        </ComboBox>
+
+                        <ComboBox
+                            Grid.Column="3"
+                            Width="80"
+                            Height="50"
+                            Margin="0,0,8,0"
+                            Padding="5,0,5,0"
+                            materialDesign:HintAssist.Hint="Vgroups"
+                            SelectedIndex="0"
+                            Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                            Text="{Binding DataBaseParam.Vgroups}">
+                            <ComboBox.ToolTip>
+                                <ToolTip>
+                                    <TextBlock>
+                                        <Run Text="数量个数和系统的逻辑处理器个数有关，计算方式：vgroups * buffer * 1.5 值必须小于系统剩余内存。" />
+                                        <LineBreak />
+                                        <Run Text="注意：vgroups 设置过小会造成‘计算并行度不足’的性能问题。" />
+                                        <LineBreak />
+                                        <Run Text="如果系统内存充足，建议全库总的 vgroups 数量设置为逻辑处理器总数的 50% 到 100%" />
+                                    </TextBlock>
+                                </ToolTip>
+                            </ComboBox.ToolTip>
+                            <ComboBoxItem>2</ComboBoxItem>
+                            <ComboBoxItem>4</ComboBoxItem>
+                            <ComboBoxItem>6</ComboBoxItem>
+                            <ComboBoxItem>8</ComboBoxItem>
+                            <ComboBoxItem>16</ComboBoxItem>
+                            <ComboBoxItem>32</ComboBoxItem>
+                        </ComboBox>
+
+
+                        <ComboBox
+                            Grid.Column="4"
+                            Width="80"
+                            Height="50"
+                            Margin="0,0,8,0"
+                            Padding="5,0,5,0"
+                            materialDesign:HintAssist.Hint="Cachesize"
+                            SelectedIndex="0"
+                            Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                            Text="{Binding DataBaseParam.Cachesize}"
+                            ToolTip="单位：MB 表示每个 vnode 中用于缓存子表最近数据的内存大小">
+                            <ComboBoxItem Content="1024" />
+                            <ComboBoxItem>2048</ComboBoxItem>
+                            <ComboBoxItem>4096</ComboBoxItem>
+                            <ComboBoxItem>8192</ComboBoxItem>
+                        </ComboBox>
+
+                        <ComboBox
+                            Grid.Column="5"
+                            Width="80"
+                            Height="50"
+                            Margin="0,0,8,0"
+                            Padding="5,0,5,0"
+                            materialDesign:HintAssist.Hint="Buffer"
+                            SelectedIndex="0"
+                            Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                            Text="{Binding DataBaseParam.Buffer}"
+                            ToolTip="单位：MB 一个 vnode 写入内存池大小，单位为 MB，默认为 256，最小为 3，最大为 16384">
+                            <ComboBoxItem Content="1024" />
+                            <ComboBoxItem>2048</ComboBoxItem>
+                            <ComboBoxItem>4096</ComboBoxItem>
+                            <ComboBoxItem>8192</ComboBoxItem>
+                            <ComboBoxItem>16384</ComboBoxItem>
+                        </ComboBox>
+
+                        <ComboBox
+                            Grid.Column="6"
+                            Width="80"
+                            Height="50"
+                            Margin="0,0,8,0"
+                            Padding="5,0,5,0"
+                            materialDesign:HintAssist.Hint="Pages"
+                            SelectedIndex="0"
+                            Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                            Text="{Binding DataBaseParam.Pages}"
+                            ToolTip="一个 vnode 中元数据存储引擎的缓存页个数，默认为 256，最小 64。一个 vnode 元数据存储占用 PAGESIZE * PAGES，默认情况下为 1MB 内存">
+                            <ComboBoxItem Content="4096" />
+                            <ComboBoxItem>8192</ComboBoxItem>
+                            <ComboBoxItem>16384</ComboBoxItem>
+                            <ComboBoxItem>32768</ComboBoxItem>
+                        </ComboBox>
+
+                        <ComboBox
+                            Grid.Column="7"
+                            Width="80"
+                            Height="50"
+                            Margin="0,0,8,0"
+                            Padding="5,0,5,0"
+                            materialDesign:HintAssist.Hint="Page Size"
+                            SelectedIndex="0"
+                            Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                            Text="{Binding DataBaseParam.Pagesize}"
+                            ToolTip="一个 vnode 中元数据存储引擎的页大小，单位为 KB，默认为 4 KB。范围为 1 到 16384，即 1 KB 到 16 MB">
+                            <ComboBoxItem Content="16" />
+                            <ComboBoxItem>32</ComboBoxItem>
+                        </ComboBox>
+
+                        <ComboBox
+                            Grid.Column="8"
+                            Width="80"
+                            Height="50"
+                            Margin="0,0,8,0"
+                            Padding="5,0,5,0"
+                            materialDesign:HintAssist.Hint="Max Rows"
+                            SelectedIndex="0"
+                            Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                            Text="{Binding DataBaseParam.Maxrows}"
+                            ToolTip="表示文件块中记录的最大条数">
+                            <ComboBoxItem>4096</ComboBoxItem>
+                            <ComboBoxItem>8192</ComboBoxItem>
+                            <ComboBoxItem>10000</ComboBoxItem>
+                        </ComboBox>
+
+                        <ComboBox
+                            Grid.Column="9"
+                            Width="80"
+                            Height="50"
+                            Margin="0,0,8,0"
+                            Padding="5,0,5,0"
+                            materialDesign:HintAssist.Hint="stt_trigger"
+                            SelectedIndex="0"
+                            Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                            Text="{Binding DataBaseParam.Stt_trigger}">
+                            <ComboBox.ToolTip>
+                                <ToolTip>
+                                    <TextBlock>
+                                        <Run Text="表示落盘文件触发文件合并的个数." />
+                                        <LineBreak />
+                                        <Run Text=" 对于少表高频写入场景，此参数建议使用默认配置." />
+                                        <LineBreak />
+                                        <Run Text=" 而对于多表低频写入场景，此参数建议配置较大的值." />
+                                    </TextBlock>
+                                </ToolTip>
+                            </ComboBox.ToolTip>
+                            <ComboBoxItem>4</ComboBoxItem>
+                            <ComboBoxItem>8</ComboBoxItem>
+                            <ComboBoxItem>16</ComboBoxItem>
+                            <ComboBoxItem>32</ComboBoxItem>
+                            <ComboBoxItem>48</ComboBoxItem>
+                        </ComboBox>
+                        <Button
+                            Grid.Column="10"
+                            Height="45"
+                            Margin="8,0,0,0"
+                            Command="{Binding CreateDatabaseCommand}"
+                            Content="创建数据库"
+                            IsEnabled="{Binding IsCanInteration}" />
+                        <Button
+                            Grid.Column="11"
+                            Height="45"
+                            Margin="8,0,0,0"
+                            Background="#EF5350"
+                            BorderBrush="#EF5350"
+                            Command="{Binding DeleteDatabaseCommand}"
+                            Content="删除数据库"
+                            IsEnabled="{Binding IsCanInteration}" />
+                        <Button
+                            Grid.Column="12"
+                            Height="45"
+                            Margin="8,0,0,0"
+                            Background="#FFA000"
+                            BorderBrush="#FFA000"
+                            Command="{Binding ClearDataCommand}"
+                            Content="清空表数据"
+                            IsEnabled="{Binding IsCanInteration}" />
+                    </Grid>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <materialDesign:Card
+                Margin="0,0,0,0"
+                Padding="10"
+                materialDesign:ElevationAssist.Elevation="Dp2">
+                <Grid>
+                    <!--<TextBlock
+                    Margin="0,0,16,0"
+                    VerticalAlignment="Center"
+                    FontWeight="Bold"
+                    Text="开始时间:" />-->
+                    <!--<ComboBox
+                    Width="200"
+                    Height="40"
+                    Margin="0"
+                    Padding="5,0,5,0"
+                    materialDesign:HintAssist.Hint="选择时间周期"
+                    DisplayMemberPath="DisplayName"
+                    ItemsSource="{Binding TimePeriodOptions}"
+                    SelectedItem="{Binding SelectedTimePeriod}"
+                    Style="{StaticResource MaterialDesignOutlinedComboBox}" />-->
+                    <StackPanel Orientation="Horizontal">
+                        <DatePicker
+                            Width="200"
+                            Height="40"
+                            Margin="0"
+                            Padding="5,0,5,0"
+                            HorizontalAlignment="Left"
+                            VerticalContentAlignment="Center"
+                            materialDesign:HintAssist.Hint="开始时间"
+                            FontSize="14"
+                            SelectedDate="{Binding StartDate, UpdateSourceTrigger=PropertyChanged, StringFormat='{}{0:yyyy-MM-dd 00:00:00}'}"
+                            Style="{StaticResource MaterialDesignOutlinedDatePicker}" />
+                        <ComboBox
+                            x:Name="cboBatchSize"
+                            Height="40"
+                            Margin="8,0,8,0"
+                            Padding="5,0,5,0"
+                            materialDesign:HintAssist.Hint="Batch Size"
+                            SelectedIndex="5"
+                            Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                            Text="{Binding TableBatchSize}">
+                            <ComboBoxItem>2000</ComboBoxItem>
+                            <ComboBoxItem>3000</ComboBoxItem>
+                            <ComboBoxItem>3500</ComboBoxItem>
+                            <ComboBoxItem>4000</ComboBoxItem>
+                            <ComboBoxItem>4500</ComboBoxItem>
+                            <ComboBoxItem>5000</ComboBoxItem>
+                            <ComboBoxItem>5500</ComboBoxItem>
+                            <ComboBoxItem>6000</ComboBoxItem>
+                            <ComboBoxItem>6500</ComboBoxItem>
+                            <ComboBoxItem>7000</ComboBoxItem>
+                            <ComboBoxItem>7500</ComboBoxItem>
+                            <ComboBoxItem>8000</ComboBoxItem>
+
+                        </ComboBox>
+                    </StackPanel>
+                    <Grid HorizontalAlignment="Right">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <Button
+                            Height="50"
+                            Margin="0,8"
+                            Command="{Binding StartMigrationCommand}"
+                            Content="迁移数据库结构"
+                            FontSize="16"
+                            IsEnabled="{Binding IsCanInteration}" />
+                        <Button
+                            Grid.Column="1"
+                            Height="50"
+                            Margin="8"
+                            Command="{Binding StartMigrationDataCommand}"
+                            Content="迁移数据库数据"
+                            FontSize="16" />
+                        <Button
+                            Grid.Column="2"
+                            Height="50"
+                            Margin="5,8,0,8"
+                            Background="#EF5350"
+                            Command="{Binding MigrationEndCommand}"
+                            Content="终止迁移" />
+                        <Button
+                            Grid.Column="3"
+                            Height="50"
+                            Margin="5,8,0,8"
+                            Background="DodgerBlue"
+                            Command="{Binding ClearLogCommand}"
+                            Content="清空消息" />
+                    </Grid>
+
+                </Grid>
+            </materialDesign:Card>
+
+        </StackPanel>
+
+        <materialDesign:Card
+            Grid.Row="2"
+            Margin="0,0,0,0"
+            VerticalAlignment="Stretch"
+            materialDesign:ElevationAssist.Elevation="Dp2"
+            Background="#1e1e1e">
+            <!--<ScrollViewer VerticalScrollBarVisibility="Auto">
+                <TextBlock
+                    Padding="8"
+                    FontFamily="Consolas"
+                    Foreground="#00ff00"
+                    Text="{Binding Logs}"
+                    TextWrapping="Wrap" />
+            </ScrollViewer>-->
+            <ListBox
+                x:Name="LogListBox"
+                ItemsSource="{Binding Logs}"
+                VirtualizingPanel.IsVirtualizing="True"
+                VirtualizingPanel.ScrollUnit="Item"
+                VirtualizingPanel.VirtualizationMode="Recycling">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Foreground" Value="#00ff00" />
+                        <Setter Property="VerticalContentAlignment" Value="Top" />
+                        <Setter Property="Height" Value="20" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <TextBlock
+                                        Margin="0"
+                                        Padding="2"
+                                        VerticalAlignment="Top"
+                                        FontFamily="Consolas"
+                                        FontSize="14"
+                                        Foreground="#00ff00"
+                                        Text="{TemplateBinding Content}"
+                                        TextWrapping="Wrap" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+        </materialDesign:Card>
+    </Grid>
+</Window>

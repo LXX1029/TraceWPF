@@ -13,6 +13,11 @@
     TextElement.Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+    <Window.Resources>
+        <Style TargetType="DatePickerTextBox">
+            <Setter Property="CaretBrush" Value="Red" />
+        </Style>
+    </Window.Resources>
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -41,6 +46,7 @@
                         Text="源数据库连接 (Source)" />
                     <TextBox
                         materialDesign:HintAssist.Hint="源数据库连接 (Source)"
+                        CaretBrush="White"
                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
                         Text="{Binding SourceConnectionString, UpdateSourceTrigger=PropertyChanged}"
                         TextWrapping="Wrap" />
@@ -60,6 +66,7 @@
                         Text="目标数据库连接 (Target)" />
                     <TextBox
                         materialDesign:HintAssist.Hint="目标数据库连接"
+                        CaretBrush="White"
                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
                         Text="{Binding TargetConnectionString, UpdateSourceTrigger=PropertyChanged}"
                         TextWrapping="Wrap" />
@@ -85,6 +92,7 @@
                             Grid.Column="0"
                             Margin="0,0,8,0"
                             materialDesign:HintAssist.Hint="目标数据库名称"
+                            CaretBrush="White"
                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
                             Text="{Binding TargetDbName, UpdateSourceTrigger=PropertyChanged}" />
                         <ComboBox
@@ -323,7 +331,13 @@
                             materialDesign:HintAssist.Hint="开始时间"
                             FontSize="14"
                             SelectedDate="{Binding StartDate, UpdateSourceTrigger=PropertyChanged, StringFormat='{}{0:yyyy-MM-dd 00:00:00}'}"
-                            Style="{StaticResource MaterialDesignOutlinedDatePicker}" />
+                            Style="{StaticResource MaterialDesignOutlinedDatePicker}">
+                            <DatePicker.Resources>
+                                <Style TargetType="{x:Type DatePickerTextBox}">
+                                    <Setter Property="CaretBrush" Value="White" />
+                                </Style>
+                            </DatePicker.Resources>
+                        </DatePicker>
                         <DatePicker
                             Width="200"
                             Height="40"

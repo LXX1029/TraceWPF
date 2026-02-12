@@ -198,7 +198,7 @@
                             SelectedIndex="0"
                             Style="{StaticResource MaterialDesignOutlinedComboBox}"
                             Text="{Binding DataBaseParam.Pages}"
-                            ToolTip="一个 vnode 中元数据存储引擎的缓存页个数，默认为 256，最小 64。一个 vnode 元数据存储占用 PAGESIZE * PAGES，默认情况下为 1MB 内存">
+                            ToolTip="定义一个vnode中元数据索引和数据块索引的内存缓存，默认为 256，最小 64。计算方式： PAGESIZE * PAGES，默认情况下为 1MB 内存">
                             <ComboBoxItem Content="4096" />
                             <ComboBoxItem>8192</ComboBoxItem>
                             <ComboBoxItem>16384</ComboBoxItem>
@@ -323,6 +323,17 @@
                             materialDesign:HintAssist.Hint="开始时间"
                             FontSize="14"
                             SelectedDate="{Binding StartDate, UpdateSourceTrigger=PropertyChanged, StringFormat='{}{0:yyyy-MM-dd 00:00:00}'}"
+                            Style="{StaticResource MaterialDesignOutlinedDatePicker}" />
+                        <DatePicker
+                            Width="200"
+                            Height="40"
+                            Margin="8,0,0,0"
+                            Padding="5,0,5,0"
+                            HorizontalAlignment="Left"
+                            VerticalContentAlignment="Center"
+                            materialDesign:HintAssist.Hint="结束时间"
+                            FontSize="14"
+                            SelectedDate="{Binding EndDate, UpdateSourceTrigger=PropertyChanged, StringFormat='{}{0:yyyy-MM-dd 23:59:59}'}"
                             Style="{StaticResource MaterialDesignOutlinedDatePicker}" />
                         <ComboBox
                             x:Name="cboBatchSize"

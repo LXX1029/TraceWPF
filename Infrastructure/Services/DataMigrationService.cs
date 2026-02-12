@@ -411,7 +411,7 @@ namespace TraceWPF.Infrastructure.Services
         }
 
         private DateTime EndTime { get; set; } = DateTime.Now;
-        public async Task MigrateDataAsync(string sourceConn, string targetConn, string sourceDbName, string targetDbName, DateTime startDateTime, int tableBatchSizet, CancellationToken token, Action<string>? action)
+        public async Task MigrateDataAsync(string sourceConn, string targetConn, string sourceDbName, string targetDbName, DateTime startDateTime, DateTime endDateTime, int tableBatchSizet, CancellationToken token, Action<string>? action)
         {
             var sourceConfig = new ConnectionConfig() { ConnectionString = sourceConn, DbType = SqlSugar.DbType.TDengine, IsAutoCloseConnection = true };
             var targetConfig = new ConnectionConfig() { ConnectionString = targetConn, DbType = SqlSugar.DbType.TDengine, IsAutoCloseConnection = true };
@@ -444,7 +444,7 @@ namespace TraceWPF.Infrastructure.Services
                 DataRow stableRow = dtStables.Rows[si];
                 string stableName = stableRow["stable_name"]?.ToString() ?? "";
                 if (string.IsNullOrEmpty(stableName)) continue;
-                string stableWhere = $" WHERE ts > '{cursorTime:yyyy-MM-dd HH:mm:ss.ffffff}' and ts < '{this.EndTime:yyyy-MM-dd HH:mm:ss.ffffff}'";
+                string stableWhere = $" WHERE ts > '{cursorTime:yyyy-MM-dd HH:mm:ss.ffffff}' and ts < '{endDateTime:yyyy-MM-dd HH:mm:ss.ffffff}'";
                 var dtTotalData = await sourceDb.Ado.GetDataTableAsync($"SELECT count(*) FROM {stableName}{stableWhere}");
                 if (dtTotalData == null || dtTotalData.Rows.Count == 0) continue;
                 if (int.TryParse(dtTotalData.Rows[0][0]?.ToString(), out int count) == false || count == 0)
@@ -488,7 +488,7 @@ namespace TraceWPF.Infrastructure.Services
 
                         while (!token.IsCancellationRequested)
                         {
-                            string tableWhere = $" WHERE ts > '{tableCursor:yyyy-MM-dd HH:mm:ss.ffffff}' and ts < '{this.EndTime:yyyy-MM-dd HH:mm:ss.ffffff}'";
+                            string tableWhere = $" WHERE ts > '{tableCursor:yyyy-MM-dd HH:mm:ss.ffffff}' and ts < '{endDateTime:yyyy-MM-dd HH:mm:ss.ffffff}'";
                             DataTable? dtData = null;
                             try
                             {

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TraceWPF.DI;
@@ -82,6 +83,9 @@ namespace TraceWPF.ViewModels
         public DateTime startDate = DateTime.Now.AddDays(-7);
 
         [ObservableProperty]
+        public DateTime endDate = DateTime.Now;
+
+        [ObservableProperty]
         private TimePeriodItem? selectedTimePeriod;
 
         [ObservableProperty]
@@ -125,7 +129,7 @@ namespace TraceWPF.ViewModels
             {
                 AppendLog($"Creating target database '{TargetDbName}'...");
                 await Task.Delay(100);
-                await _migrationService!.CreateDatabaseAsync(TargetConnectionString, TargetDbName,this.DataBaseParam);
+                await _migrationService!.CreateDatabaseAsync(TargetConnectionString, TargetDbName, this.DataBaseParam);
                 //var taosdbPath = "D:\\taosdb";
                 //if (!Directory.Exists(taosdbPath))
                 //    Directory.CreateDirectory(taosdbPath);
@@ -256,8 +260,15 @@ namespace TraceWPF.ViewModels
                     AppendLog("Error: Could not determine Source Database name from Connection String. Please include 'DATABASE=...'");
                     return;
                 }
-                int filterDays = Convert.ToInt32(DateTime.Now.Subtract(this.StartDate).TotalDays);
+                if (this.EndDate < this.StartDate)
+                {
+                    AppendLog("Error: EndDate cannot be earlier than StartDate. Please check your date settings.");
+                    MessageBox.Show("结束时间不能早于开始时间，请检查日期设置。", "日期错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                int filterDays = Convert.ToInt32(this.EndDate.Subtract(this.StartDate).TotalDays);
                 this.StartDate = DateTime.Parse(StartDate.ToString("yyyy-MM-dd 00:00:00"));
+                this.EndDate = DateTime.Parse(EndDate.ToString("yyyy-MM-dd 23:59:59"));
                 AppendLog($"Source DB: {sourceDb}, Target DB: {TargetDbName}, Filter: 近{filterDays}天");
                 if (!TargetConnectionString.Contains("DataBase", StringComparison.OrdinalIgnoreCase))
                 {
@@ -266,7 +277,7 @@ namespace TraceWPF.ViewModels
 
                 // Data
                 AppendLog("Migrating Data...");
-                await _migrationService!.MigrateDataAsync(SourceConnectionString, TargetConnectionStringTemp, sourceDb, TargetDbName, this.StartDate, this.TableBatchSize, _migrationDataToken, (msg) =>
+                await _migrationService!.MigrateDataAsync(SourceConnectionString, TargetConnectionStringTemp, sourceDb, TargetDbName, this.StartDate, this.EndDate, this.TableBatchSize, _migrationDataToken, (msg) =>
                 {
                     AppendLog(msg);
                 });

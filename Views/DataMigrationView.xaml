@@ -105,7 +105,8 @@
                             Style="{StaticResource MaterialDesignOutlinedComboBox}"
                             Text="{Binding DataBaseParam.KeepDays}"
                             ToolTip="单位：天 配置数据过期时间">
-                            <ComboBoxItem Content="7" />
+                            <ComboBoxItem>3</ComboBoxItem>
+                            <ComboBoxItem>7</ComboBoxItem>
                             <ComboBoxItem>14</ComboBoxItem>
                             <ComboBoxItem>30</ComboBoxItem>
                             <ComboBoxItem>60</ComboBoxItem>

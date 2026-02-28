@@ -105,7 +105,6 @@
                             Style="{StaticResource MaterialDesignOutlinedComboBox}"
                             Text="{Binding DataBaseParam.KeepDays}"
                             ToolTip="单位：天 配置数据过期时间">
-                            <ComboBoxItem>3</ComboBoxItem>
                             <ComboBoxItem>7</ComboBoxItem>
                             <ComboBoxItem>14</ComboBoxItem>
                             <ComboBoxItem>30</ComboBoxItem>
@@ -126,6 +125,7 @@
                             Style="{StaticResource MaterialDesignOutlinedComboBox}"
                             Text="{Binding DataBaseParam.Duration}"
                             ToolTip="单位：天 表示数据文件存储数据的时间跨度,时间跨度内的数据会存到同一个.data文件。对于机械硬盘，这种大块连续存储会减少磁头寻道次数。">
+                            <ComboBoxItem>3</ComboBoxItem>
                             <ComboBoxItem Content="7" />
                             <ComboBoxItem>14</ComboBoxItem>
                             <ComboBoxItem>21</ComboBoxItem>

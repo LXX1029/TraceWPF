@@ -62,6 +62,10 @@ namespace TraceWPF.ViewModels
 
         private int _nextId = 1;
 
+        /// <summary>
+        /// 构造函数，初始化时加载示例雇员数据。
+        /// Constructor that loads sample employee data on initialization.
+        /// </summary>
         public EmployeeViewModel()
         {
             // 添加一些示例数据

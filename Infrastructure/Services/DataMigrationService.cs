@@ -10,8 +10,23 @@ using TraceWPF.Domain.Models;
 
 namespace TraceWPF.Infrastructure.Services
 {
+    /// <summary>
+    /// 数据迁移服务实现类，通过 SqlSugar ORM 操作 TDengine 数据库，提供数据库创建/删除、
+    /// 表结构迁移、数据迁移（按子表逐一迁移，支持时间过滤和分页）、清空数据等功能。
+    /// 
+    /// Data migration service implementation that uses SqlSugar ORM to operate on TDengine databases.
+    /// Provides database creation/deletion, schema migration, data migration (sub-table by sub-table with time filtering and pagination),
+    /// and data clearing functionality.
+    /// </summary>
     public class DataMigrationService : IDataMigrationService, ITransient
     {
+        /// <summary>
+        /// 创建目标 TDengine 数据库，使用指定的参数（BUFFER、CACHESIZE、DURATION、KEEP 等）。
+        /// Creates the target TDengine database using specified parameters (BUFFER, CACHESIZE, DURATION, KEEP, etc.).
+        /// </summary>
+        /// <param name="connectionString">目标数据库连接字符串 / Target database connection string.</param>
+        /// <param name="dbName">要创建的数据库名称 / The name of the database to create.</param>
+        /// <param name="dataBaseParam">数据库创建参数对象 / Database creation parameters object.</param>
         public async Task CreateDatabaseAsync(string connectionString, string dbName, DataBaseParam dataBaseParam)
         {
             // Connect to server generally.
@@ -32,6 +47,12 @@ namespace TraceWPF.Infrastructure.Services
             });
         }
 
+        /// <summary>
+        /// 删除指定的 TDengine 数据库（如果存在）。
+        /// Drops the specified TDengine database if it exists.
+        /// </summary>
+        /// <param name="connectionString">目标数据库连接字符串 / Target database connection string.</param>
+        /// <param name="dbName">要删除的数据库名称 / The name of the database to drop.</param>
         public async Task DeleteDatabaseAsync(string connectionString, string dbName)
         {
             var config = new ConnectionConfig()
@@ -46,6 +67,17 @@ namespace TraceWPF.Infrastructure.Services
             await db.Ado.ExecuteCommandAsync(sql);
         }
 
+        /// <summary>
+        /// 迁移表结构：从源数据库读取所有超级表（STable）定义并在目标库中重建，
+        /// 然后遍历所有子表，读取其 TAG 值并在目标库中创建对应的子表。
+        /// 
+        /// Migrates schema: reads all super table (STable) definitions from the source database and recreates them in the target database,
+        /// then iterates through all sub-tables, reads their TAG values, and creates corresponding sub-tables in the target database.
+        /// </summary>
+        /// <param name="sourceConn">源数据库连接字符串 / Source database connection string.</param>
+        /// <param name="targetConn">目标数据库连接字符串 / Target database connection string.</param>
+        /// <param name="sourceDbName">源数据库名称 / Source database name.</param>
+        /// <param name="targetDbName">目标数据库名称 / Target database name.</param>
         public async Task MigrateSchemaAsync(string sourceConn, string targetConn, string sourceDbName, string targetDbName)
         {
             var sourceConfig = new ConnectionConfig() { ConnectionString = sourceConn, DbType = SqlSugar.DbType.TDengine, IsAutoCloseConnection = true, LanguageType = LanguageType.Chinese };
@@ -180,6 +212,15 @@ namespace TraceWPF.Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// 查询目标数据库的最大 SQL 语句长度限制（maxsqllength 变量）。
+        /// 如果查询失败则返回默认值 1048576 (1MB)。
+        /// 
+        /// Queries the target database for the maximum SQL statement length limit (maxsqllength variable).
+        /// Returns a default value of 1048576 (1MB) if the query fails.
+        /// </summary>
+        /// <param name="db">SqlSugar 数据库客户端实例 / The SqlSugar database client instance.</param>
+        /// <returns>最大 SQL 语句长度 / The maximum SQL statement length.</returns>
         private async Task<int> GetMaxSqlLengthAsync(SqlSugarClient db)
         {
             try
@@ -203,6 +244,22 @@ namespace TraceWPF.Infrastructure.Services
             return 1048576; // Default to 1MB if query fails
         }
 
+        /// <summary>
+        /// [旧版] 数据迁移方法（基于 filterDays 整数过滤天数）：按子表逐一迁移数据，
+        /// 使用 TS 分页策略和 SQL 语句长度检查以避免超长 SQL。
+        /// 已被新版 MigrateDataAsync（基于 DateTime 起止时间）替代。
+        /// 
+        /// [Legacy] Data migration method (filter by integer filterDays): migrates data sub-table by sub-table,
+        /// using TS-based pagination and SQL length checking to avoid oversized SQL statements.
+        /// Superseded by the new MigrateDataAsync (DateTime-based start/end time).
+        /// </summary>
+        /// <param name="sourceConn">源数据库连接字符串 / Source database connection string.</param>
+        /// <param name="targetConn">目标数据库连接字符串 / Target database connection string.</param>
+        /// <param name="sourceDbName">源数据库名称 / Source database name.</param>
+        /// <param name="targetDbName">目标数据库名称 / Target database name.</param>
+        /// <param name="filterDays">数据过滤天数（0 表示全部数据）/ Filter days (0 means all data).</param>
+        /// <param name="token">取消令牌 / Cancellation token.</param>
+        /// <param name="action">进度回调方法 / Progress callback action.</param>
         public async Task MigrateDataAsync1(string sourceConn, string targetConn, string sourceDbName, string targetDbName, int filterDays, CancellationToken token, Action<string>? action)
         {
             var sourceConfig = new ConnectionConfig() { ConnectionString = sourceConn, DbType = SqlSugar.DbType.TDengine, IsAutoCloseConnection = true };
@@ -410,7 +467,36 @@ namespace TraceWPF.Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// 用于记录迁移结束时间的属性。
+        /// Property for recording the migration end time.
+        /// </summary>
         private DateTime EndTime { get; set; } = DateTime.Now;
+
+        /// <summary>
+        /// 数据迁移方法（基于 DateTime 起止时间）：
+        /// 1. 连接源和目标 TDengine 数据库。
+        /// 2. 遍历源库中所有超级表，获取每个超级表下的所有子表。
+        /// 3. 对每个子表，使用 TS 分页策略按批次读取数据。
+        /// 4. 将每行数据格式化为 INSERT VALUES 语句并批量写入目标库。
+        /// 5. 使用 ArrayPool 降低内存分配压力，支持取消和错误恢复。
+        /// 
+        /// Data migration method (DateTime-based start/end time):
+        /// 1. Connects to source and target TDengine databases.
+        /// 2. Iterates through all super tables in the source database, retrieves all sub-tables for each.
+        /// 3. For each sub-table, reads data in batches using TS-based pagination.
+        /// 4. Formats each row into INSERT VALUES statements and batch-inserts into the target database.
+        /// 5. Uses ArrayPool to reduce memory allocation pressure; supports cancellation and error recovery.
+        /// </summary>
+        /// <param name="sourceConn">源数据库连接字符串 / Source database connection string.</param>
+        /// <param name="targetConn">目标数据库连接字符串 / Target database connection string.</param>
+        /// <param name="sourceDbName">源数据库名称 / Source database name.</param>
+        /// <param name="targetDbName">目标数据库名称 / Target database name.</param>
+        /// <param name="startDateTime">数据过滤的开始时间 / Start datetime for data filtering.</param>
+        /// <param name="endDateTime">数据过滤的结束时间 / End datetime for data filtering.</param>
+        /// <param name="tableBatchSizet">每批次迁移的行数 / Number of rows per migration batch.</param>
+        /// <param name="token">取消令牌 / Cancellation token.</param>
+        /// <param name="action">进度回调方法 / Progress callback action.</param>
         public async Task MigrateDataAsync(string sourceConn, string targetConn, string sourceDbName, string targetDbName, DateTime startDateTime, DateTime endDateTime, int tableBatchSizet, CancellationToken token, Action<string>? action)
         {
             var sourceConfig = new ConnectionConfig() { ConnectionString = sourceConn, DbType = SqlSugar.DbType.TDengine, IsAutoCloseConnection = true };
@@ -616,6 +702,20 @@ namespace TraceWPF.Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// 清空目标数据库中所有子表的数据（保留表结构）：
+        /// 1. 遍历数据库中所有超级表。
+        /// 2. 对于每个超级表，查找所有子表。
+        /// 3. 对每个子表执行 DELETE FROM 语句删除全部数据。
+        /// 
+        /// Clears all data from sub-tables in the target database (table structures are preserved):
+        /// 1. Iterates through all super tables in the database.
+        /// 2. For each super table, finds all sub-tables.
+        /// 3. Executes DELETE FROM on each sub-table to remove all data.
+        /// </summary>
+        /// <param name="connectionString">目标数据库连接字符串 / Target database connection string.</param>
+        /// <param name="dbName">目标数据库名称 / Target database name.</param>
+        /// <param name="action">进度回调方法 / Progress callback action.</param>
         public async Task ClearDataAsync(string connectionString, string dbName, Action<string>? action)
         {
             var config = new ConnectionConfig() { ConnectionString = connectionString, DbType = SqlSugar.DbType.TDengine, IsAutoCloseConnection = true };

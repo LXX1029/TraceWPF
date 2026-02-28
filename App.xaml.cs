@@ -5,8 +5,26 @@ using Microsoft.Extensions.Configuration;
 
 namespace TraceWPF;
 
+/// <summary>
+/// 应用程序入口类，负责应用启动时的依赖注入配置和主窗口初始化。
+/// Application entry class responsible for configuring dependency injection and initializing the main window on startup.
+/// </summary>
 public partial class App : System.Windows.Application
 {
+    /// <summary>
+    /// 应用程序启动时的回调方法。
+    /// 1. 读取 appsettings.json 获取数据库连接字符串。
+    /// 2. 展开环境变量并确保 SQLite 数据目录存在。
+    /// 3. 注册 SqlSugarClient 单例及通过 AutoRegister 自动注册 Views、ViewModels、UseCases、Services。
+    /// 4. 构建 DI 容器并显示主窗口 (DataMigrationView)。
+    /// 
+    /// Called when the application starts.
+    /// 1. Reads appsettings.json to obtain the database connection string.
+    /// 2. Expands environment variables and ensures the SQLite data directory exists.
+    /// 3. Registers a SqlSugarClient singleton and auto-registers Views, ViewModels, UseCases, and Services via AutoRegister.
+    /// 4. Builds the DI container and shows the main window (DataMigrationView).
+    /// </summary>
+    /// <param name="e">启动事件参数 / Startup event arguments.</param>
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);

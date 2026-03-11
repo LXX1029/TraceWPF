@@ -52,7 +52,7 @@ namespace TraceWPF.DI
 
                 var serviceInterfaces = type.GetInterfaces().Where(i => !markerTypes.Contains(i)).ToArray();
                 var ns = type.Namespace ?? "";
-                var concreteNs = new[] { "TraceWPF.Views", "TraceWPF.ViewModels" };
+                var concreteNs = new[] { "TraceWPF", "TraceWPF.Views", "TraceWPF.ViewModels" };
                 var registerConcrete = concreteNs.Any(p => ns.StartsWith(p, StringComparison.Ordinal));
 
                 if (lifetimeMarker == typeof(ISingleton))

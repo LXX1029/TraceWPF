@@ -1,0 +1,278 @@
+<Window
+    x:Class="TraceWPF.GaugeTestWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:TraceWPF.Controls"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    Title="刻度盘控件测试 - Gauge Control Test"
+    Width="900"
+    Height="750"
+    Background="{DynamicResource MaterialDesign.Brush.Background}"
+    FontFamily="{materialDesign:MaterialDesignFont}"
+    TextElement.FontSize="14"
+    TextElement.Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
+    WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Foreground}" />
+            <Setter Property="Opacity" Value="0.8" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+        </Style>
+        <Style x:Key="ValueLabelStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Secondary}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Width" Value="40" />
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Offset="0" Color="#1a1a2e" />
+                <GradientStop Offset="0.5" Color="#16213e" />
+                <GradientStop Offset="1" Color="#0f3460" />
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="30">
+            <StackPanel>
+                <!-- Title -->
+                <TextBlock
+                    FontSize="28"
+                    FontWeight="Bold"
+                    Foreground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
+                    Text="自定义刻度盘控件测试">
+                    <TextBlock.Effect>
+                        <DropShadowEffect
+                            BlurRadius="20"
+                            Opacity="0.5"
+                            ShadowDepth="0"
+                            Color="#7C4DFF" />
+                    </TextBlock.Effect>
+                </TextBlock>
+                <TextBlock
+                    Margin="0,4,0,20"
+                    Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
+                    Opacity="0.6"
+                    Text="HorizontalGauge Custom Control Demo" />
+
+                <!-- Interactive Controls Card -->
+                <materialDesign:Card
+                    Margin="0,0,0,20"
+                    Padding="20"
+                    materialDesign:ElevationAssist.Elevation="Dp8"
+                    Background="#252542">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,12"
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Secondary}"
+                            Text="控制面板 - 参数调节" />
+
+                        <!-- Minimum Slider -->
+                        <DockPanel Margin="0,4">
+                            <TextBlock DockPanel.Dock="Left" Style="{StaticResource LabelStyle}" Text="Minimum:" Width="140" />
+                            <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueLabelStyle}"
+                                       Text="{Binding Value, ElementName=SliderMinimum, StringFormat={}{0:F1}}" />
+                            <Slider x:Name="SliderMinimum"
+                                    Minimum="0" Maximum="10" Value="0"
+                                    TickFrequency="0.5" IsSnapToTickEnabled="True"
+                                    VerticalAlignment="Center" />
+                        </DockPanel>
+
+                        <!-- Maximum Slider -->
+                        <DockPanel Margin="0,4">
+                            <TextBlock DockPanel.Dock="Left" Style="{StaticResource LabelStyle}" Text="Maximum:" Width="140" />
+                            <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueLabelStyle}"
+                                       Text="{Binding Value, ElementName=SliderMaximum, StringFormat={}{0:F1}}" />
+                            <Slider x:Name="SliderMaximum"
+                                    Minimum="1" Maximum="20" Value="10"
+                                    TickFrequency="0.5" IsSnapToTickEnabled="True"
+                                    VerticalAlignment="Center" />
+                        </DockPanel>
+
+                        <!-- CurrentValue Slider -->
+                        <DockPanel Margin="0,4">
+                            <TextBlock DockPanel.Dock="Left" Style="{StaticResource LabelStyle}" Text="CurrentValue:" Width="140" />
+                            <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueLabelStyle}"
+                                       Text="{Binding Value, ElementName=SliderCurrentValue, StringFormat={}{0:F1}}" />
+                            <Slider x:Name="SliderCurrentValue"
+                                    Minimum="0" Maximum="20" Value="8"
+                                    TickFrequency="0.1" IsSnapToTickEnabled="True"
+                                    VerticalAlignment="Center" />
+                        </DockPanel>
+
+                        <!-- FlowLowLevelAlarm Slider -->
+                        <DockPanel Margin="0,4">
+                            <TextBlock DockPanel.Dock="Left" Style="{StaticResource LabelStyle}" Text="FlowLowLevelAlarm:" Width="140" />
+                            <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueLabelStyle}"
+                                       Text="{Binding Value, ElementName=SliderLowAlarm, StringFormat={}{0:F1}}" />
+                            <Slider x:Name="SliderLowAlarm"
+                                    Minimum="0" Maximum="20" Value="3.5"
+                                    TickFrequency="0.1" IsSnapToTickEnabled="True"
+                                    VerticalAlignment="Center" />
+                        </DockPanel>
+
+                        <!-- FlowHighLevelAlarm Slider -->
+                        <DockPanel Margin="0,4">
+                            <TextBlock DockPanel.Dock="Left" Style="{StaticResource LabelStyle}" Text="FlowHighLevelAlarm:" Width="140" />
+                            <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueLabelStyle}"
+                                       Text="{Binding Value, ElementName=SliderHighAlarm, StringFormat={}{0:F1}}" />
+                            <Slider x:Name="SliderHighAlarm"
+                                    Minimum="0" Maximum="20" Value="5.0"
+                                    TickFrequency="0.1" IsSnapToTickEnabled="True"
+                                    VerticalAlignment="Center" />
+                        </DockPanel>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Gauge 1: Interactive (bound to sliders) -->
+                <materialDesign:Card
+                    Margin="0,0,0,16"
+                    Padding="20"
+                    materialDesign:ElevationAssist.Elevation="Dp4"
+                    Background="#1e1e3a">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,8"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Foreground="#7C4DFF"
+                            Text="📊 交互式刻度盘 (Interactive)" />
+                        <controls:HorizontalGauge
+                            Height="80"
+                            Minimum="{Binding Value, ElementName=SliderMinimum}"
+                            Maximum="{Binding Value, ElementName=SliderMaximum}"
+                            CurrentValue="{Binding Value, ElementName=SliderCurrentValue}"
+                            FlowLowLevelAlarm="{Binding Value, ElementName=SliderLowAlarm}"
+                            FlowHighLevelAlarm="{Binding Value, ElementName=SliderHighAlarm}" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Gauge 2: Normal state (value within range) -->
+                <materialDesign:Card
+                    Margin="0,0,0,16"
+                    Padding="20"
+                    materialDesign:ElevationAssist.Elevation="Dp4"
+                    Background="#1e1e3a">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,4"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Foreground="#4CAF50"
+                            Text="✅ 正常状态 (Normal: CurrentValue=4, Section=3~5.0)" />
+                        <TextBlock
+                            Margin="0,0,0,8"
+                            FontSize="11"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
+                            Opacity="0.5"
+                            Text="CurrentValue 超出 Section 上限 → 红色指示线" />
+                        <controls:HorizontalGauge
+                            Height="80"
+                            CurrentValue="4"
+                            FlowLowLevelAlarm="3"
+                            FlowHighLevelAlarm="5.0" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Gauge 3: Below Low Alarm -->
+                <materialDesign:Card
+                    Margin="0,0,0,16"
+                    Padding="20"
+                    materialDesign:ElevationAssist.Elevation="Dp4"
+                    Background="#1e1e3a">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,4"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Foreground="#FF5722"
+                            Text="⚠️ 低报警状态 (Below Low Alarm: CurrentValue=2, LowAlarm=3.5)" />
+                        <TextBlock
+                            Margin="0,0,0,8"
+                            FontSize="11"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
+                            Opacity="0.5"
+                            Text="CurrentValue &lt; FlowLowLevelAlarm → 显示虚线报警框" />
+                        <controls:HorizontalGauge
+                            Height="80"
+                            CurrentValue="2"
+                            FlowLowLevelAlarm="3.5"
+                            FlowHighLevelAlarm="5.0" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Gauge 4: Above High Alarm -->
+                <materialDesign:Card
+                    Margin="0,0,0,16"
+                    Padding="20"
+                    materialDesign:ElevationAssist.Elevation="Dp4"
+                    Background="#1e1e3a">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,4"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Foreground="#FF5722"
+                            Text="🔺 高报警状态 (Above High Alarm: CurrentValue=4, HighAlarm=3.5)" />
+                        <TextBlock
+                            Margin="0,0,0,8"
+                            FontSize="11"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
+                            Opacity="0.5"
+                            Text="CurrentValue &gt; FlowHighLevelAlarm → 显示高报警刻度线" />
+                        <controls:HorizontalGauge
+                            Height="80"
+                            CurrentValue="4"
+                            FlowLowLevelAlarm="3.0"
+                            FlowHighLevelAlarm="3.5">
+                            <controls:HorizontalGauge.SectionBackground>
+                                <SolidColorBrush Color="#3300BCD4" />
+                            </controls:HorizontalGauge.SectionBackground>
+                        </controls:HorizontalGauge>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Gauge 5: Custom Section Background demo -->
+                <materialDesign:Card
+                    Margin="0,0,0,16"
+                    Padding="20"
+                    materialDesign:ElevationAssist.Elevation="Dp4"
+                    Background="#1e1e3a">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,4"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Foreground="#E040FB"
+                            Text="🎨 自定义Section背景 (Custom SectionBackground)" />
+                        <TextBlock
+                            Margin="0,0,0,8"
+                            FontSize="11"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
+                            Opacity="0.5"
+                            Text="使用紫色渐变作为Section背景" />
+                        <controls:HorizontalGauge
+                            Height="80"
+                            CurrentValue="6"
+                            FlowLowLevelAlarm="4.0"
+                            FlowHighLevelAlarm="7.0">
+                            <controls:HorizontalGauge.SectionBackground>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" Opacity="0.3">
+                                    <GradientStop Offset="0" Color="#E040FB" />
+                                    <GradientStop Offset="1" Color="#7C4DFF" />
+                                </LinearGradientBrush>
+                            </controls:HorizontalGauge.SectionBackground>
+                        </controls:HorizontalGauge>
+                    </StackPanel>
+                </materialDesign:Card>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

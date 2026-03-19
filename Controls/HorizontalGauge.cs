@@ -171,7 +171,7 @@ public class HorizontalGauge : FrameworkElement
     private const double MediumTickHeight = 10;
     private const double MinorTickHeight = 6;
     private const double IndicatorRadius = 5;
-    private const double BracketHeight = 24;
+    private const double BracketHeight = 16;
 
     public HorizontalGauge()
     {
@@ -236,7 +236,7 @@ public class HorizontalGauge : FrameworkElement
 
         double lowX = ValueToX(FlowLowLevelAlarm, trackLeft, trackWidth);
         double highX = ValueToX(FlowHighLevelAlarm, trackLeft, trackWidth);
-        double sectionHeight = 36;
+        double sectionHeight = 20;
 
         var rect = new Rect(lowX, centerY - sectionHeight / 2, highX - lowX, sectionHeight);
         dc.DrawRectangle(SectionBackground, null, rect);
@@ -336,13 +336,13 @@ public class HorizontalGauge : FrameworkElement
         dc.DrawLine(bracketPen, new Point(highX, bracketTop), new Point(highX, bracketBottom));
         dc.DrawLine(bracketPen, new Point(highX, bracketBottom), new Point(highX - bracketArm, bracketBottom));
 
-        // Small dot at the center-top of the section
-        double midX = (lowX + highX) / 2;
-        dc.DrawEllipse(
-            new SolidColorBrush(Color.FromRgb(76, 175, 80)),
-            null,
-            new Point(midX, bracketTop - 4),
-            3, 3);
+        // Center dot hidden per requirements
+        // double midX = (lowX + highX) / 2;
+        // dc.DrawEllipse(
+        //     new SolidColorBrush(Color.FromRgb(76, 175, 80)),
+        //     null,
+        //     new Point(midX, bracketTop - 4),
+        //     3, 3);
     }
 
     /// <summary>
@@ -390,14 +390,14 @@ public class HorizontalGauge : FrameworkElement
         }
 
         // Indicator dot
-        dc.DrawEllipse(indicatorBrush, null, new Point(x, centerY - MajorTickHeight / 2 - IndicatorRadius - 2), IndicatorRadius, IndicatorRadius);
+        dc.DrawEllipse(indicatorBrush, null, new Point(x, centerY - MajorTickHeight - IndicatorRadius - 2), IndicatorRadius, IndicatorRadius);
 
-        // Vertical line at current value position (same color as dot)
+        // Vertical line at current value position (2x MajorTickHeight)
         var cursorLine = new Pen(indicatorBrush, 1.5);
         cursorLine.Freeze();
         dc.DrawLine(cursorLine,
-            new Point(x, centerY - MajorTickHeight / 2),
-            new Point(x, centerY + MajorTickHeight / 2));
+            new Point(x, centerY - MajorTickHeight),
+            new Point(x, centerY + MajorTickHeight));
 
         // Value label below axis (same color as indicator)
         var valueText = new FormattedText(

@@ -51,6 +51,7 @@ public partial class App : System.Windows.Application
         TraceWPF.DI.ServiceCollectionExtensions.AutoRegister(
             services,
             typeof(App).Assembly,
+            "TraceWPF",
             "TraceWPF.Views",
             "TraceWPF.ViewModels",
             "TraceWPF.Application.UseCases",
@@ -61,7 +62,9 @@ public partial class App : System.Windows.Application
 
         //var mainWindow = (Views.MainWindow)provider.GetService(typeof(Views.MainWindow))!;
         //mainWindow.Show();
-        var mainWindow = (Views.DataMigrationView)provider.GetService(typeof(Views.DataMigrationView))!;
+        //var mainWindow = (Views.DataMigrationView)provider.GetService(typeof(Views.DataMigrationView))!;
+        //mainWindow.Show();
+        var mainWindow = (GaugeTestWindow)provider.GetService(typeof(GaugeTestWindow))!;
         mainWindow.Show();
     }
 }

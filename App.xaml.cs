@@ -62,9 +62,9 @@ public partial class App : System.Windows.Application
 
         //var mainWindow = (Views.MainWindow)provider.GetService(typeof(Views.MainWindow))!;
         //mainWindow.Show();
-        //var mainWindow = (Views.DataMigrationView)provider.GetService(typeof(Views.DataMigrationView))!;
-        //mainWindow.Show();
-        var mainWindow = (GaugeTestWindow)provider.GetService(typeof(GaugeTestWindow))!;
+        var mainWindow = (Views.DataMigrationView)provider.GetService(typeof(Views.DataMigrationView))!;
         mainWindow.Show();
+        //var mainWindow = (GaugeTestWindow)provider.GetService(typeof(GaugeTestWindow))!;
+        //mainWindow.Show();
     }
 }

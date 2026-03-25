@@ -336,7 +336,10 @@ namespace TraceWPF.ViewModels
                     TargetConnectionStringTemp = TargetConnectionString + $";DataBase={TargetDbName}";
                 }
 
-                await _migrationService!.MigrateSchemaAsync(SourceConnectionString, TargetConnectionStringTemp, sourceDb, TargetDbName);
+                await _migrationService!.MigrateSchemaAsync(SourceConnectionString, TargetConnectionStringTemp, sourceDb, TargetDbName, msg =>
+                {
+                    AppendLog(msg);
+                });
                 AppendLog("Schema migration completed.");
             }
             catch (Exception ex)

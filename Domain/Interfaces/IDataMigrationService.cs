@@ -37,7 +37,7 @@ namespace TraceWPF.Domain.Interfaces
         /// <param name="targetConn">目标数据库连接字符串 / Target database connection string.</param>
         /// <param name="sourceDbName">源数据库名称 / Source database name.</param>
         /// <param name="targetDbName">目标数据库名称 / Target database name.</param>
-        Task MigrateSchemaAsync(string sourceConn, string targetConn, string sourceDbName, string targetDbName);
+        Task MigrateSchemaAsync(string sourceConn, string targetConn, string sourceDbName, string targetDbName, Action<string>? action);
 
         /// <summary>
         /// 异步迁移数据：按子表逐一从源数据库读取指定时间范围内的数据，并批量写入目标数据库。

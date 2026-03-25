@@ -40,7 +40,7 @@ namespace TraceWPF.Infrastructure.Services
             };
 
             using var db = new SqlSugarClient(config);
-            var sql = $"CREATE DATABASE IF NOT EXISTS {dbName} BUFFER {dataBaseParam.Buffer} CACHESIZE {dataBaseParam.Cachesize} CACHEMODEL 'last_row' COMP 2 DURATION {dataBaseParam.Duration}d WAL_FSYNC_PERIOD 3000 MAXROWS {dataBaseParam.Maxrows} MINROWS 100 STT_TRIGGER {dataBaseParam.Stt_trigger} KEEP {dataBaseParam.KeepDays}d PAGES {dataBaseParam.Pages} PAGESIZE {dataBaseParam.Pagesize} PRECISION 'us' REPLICA 1 WAL_LEVEL 1 VGROUPS {dataBaseParam.Vgroups} SINGLE_STABLE 0";
+            var sql = $"CREATE DATABASE IF NOT EXISTS {dbName} BUFFER {dataBaseParam.Buffer} CACHESIZE {dataBaseParam.Cachesize} CACHEMODEL 'last_row' COMP 2 DURATION {dataBaseParam.Duration}d WAL_FSYNC_PERIOD 3000 MAXROWS {dataBaseParam.Maxrows} MINROWS 100 STT_TRIGGER {dataBaseParam.Stt_trigger} KEEP {dataBaseParam.KeepDays}d PAGES {dataBaseParam.Pages} PAGESIZE {dataBaseParam.Pagesize} PRECISION 'us' REPLICA 1 WAL_LEVEL 2 VGROUPS {dataBaseParam.Vgroups} SINGLE_STABLE 0";
             await Task.Run(async () =>
             {
                 await db.Ado.ExecuteCommandAsync(sql);
@@ -78,7 +78,7 @@ namespace TraceWPF.Infrastructure.Services
         /// <param name="targetConn">目标数据库连接字符串 / Target database connection string.</param>
         /// <param name="sourceDbName">源数据库名称 / Source database name.</param>
         /// <param name="targetDbName">目标数据库名称 / Target database name.</param>
-        public async Task MigrateSchemaAsync(string sourceConn, string targetConn, string sourceDbName, string targetDbName)
+        public async Task MigrateSchemaAsync(string sourceConn, string targetConn, string sourceDbName, string targetDbName, Action<string>? action)
         {
             var sourceConfig = new ConnectionConfig() { ConnectionString = sourceConn, DbType = SqlSugar.DbType.TDengine, IsAutoCloseConnection = true, LanguageType = LanguageType.Chinese };
             var targetConfig = new ConnectionConfig() { ConnectionString = targetConn, DbType = SqlSugar.DbType.TDengine, IsAutoCloseConnection = true };
@@ -148,6 +148,8 @@ namespace TraceWPF.Infrastructure.Services
                     }
                     //}
                     stableTagsMap[stableName] = tags;
+
+                    action?.Invoke($"Migrated schema for super table {stableName} with tags: {string.Join(",", tags)}");
                 }
 
                 //}
@@ -207,6 +209,8 @@ namespace TraceWPF.Infrastructure.Services
                             await targetDb.Ado.ExecuteCommandAsync(createSubSql);
                         }
                     }
+
+                    action?.Invoke($"Migrated schema for sub table {tableName} under super table {stableName}");
                 }
                 //}
             }
